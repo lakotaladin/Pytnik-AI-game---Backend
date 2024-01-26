@@ -40,7 +40,7 @@ def Projekat1(request):
     # vracamo putanju i cenu
     return JsonResponse({'path': path, 'matrixCost': matrixCost})
 
-
+# KLASAA
 class Graph(object):
     def __init__(self, height, width):  # inicijalizujemo objekat
         self.visitedS = []  # niz posecenih cvorova
@@ -91,9 +91,11 @@ class Graph(object):
             current = came_from[current]
         path.reverse()  # Rekonstruisani put je u obrnutom redosledu
         return path
-# algoritmi
 
-    def aki_search(self, start, matrixCost, gold_positions):  # dubina
+# algoritmi ---------------------
+
+# AKI
+    def aki_search(self, start, matrixCost, gold_positions):  # pretraga po dubini - na pocetak
         paths = []  # Krira praznu putanju
         # Sve moguce pozicije zlatnika u matrici - matrica sudsestva
         gold_positions = [(pos, i) for i, pos in enumerate(gold_positions)]
@@ -142,8 +144,8 @@ class Graph(object):
                         came_from[tuple(move)] = position
 
         return paths
-
-    def jocke(self, start, matrixCost, gold_positions):  # po sirini pretraga
+# Djouk
+    def jocke(self, start, matrixCost, gold_positions):  # po sirini pretraga - na kraj 
         visited = set()
         queue = deque([(start, 0, [])])
 
@@ -166,13 +168,13 @@ class Graph(object):
 
         return None, None
 # Povezivanje sa algoritmom iznad
-
     def jocke_search(self, start, matrixCost, gold_positions):
         paths_to_gold = []
         while gold_positions:
             path_to_gold, last_position = self.jocke(
                 start, matrixCost, gold_positions)  # start je trenutno mesto agenta
-            # Koristi se BFS za pronalaženje putanjje do najblizeg zlatnika path_to_gold je pronađena putanja, a last_position je poslednja pozicija na toj putanji, koja sadrži zlatnik.
+            # Koristi se BFS za pronalaženje putanjje do najblizeg zlatnika path_to_gold je pronađena putanja, 
+            # A last_position je poslednja pozicija na toj putanji, koja sadrži zlatnik.
             if path_to_gold:  # Ako smo pronašli putanju do zlatnika
                 # Dodajemo putanju do zlatnika u listu svih putanja
                 paths_to_gold.append(path_to_gold)
@@ -183,43 +185,42 @@ class Graph(object):
     def get_moves(self, position):
         x, y = position
         moves = []
-
+         # definisem moguce poteze
         possible_moves = [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)]
-
+        # prolazim kroz svaki moguci potez
         for move in possible_moves:
             if 0 <= move[0] < self.height and 0 <= move[1] < self.width:
                 moves.append(move)
 
         return moves
 
-    import math
 
-    # Manhattan heuristika
+    # Menhaten heuristika
 
     def get_heuristic(self, current_position, position, remaining_gold_positions):
         if not remaining_gold_positions:    # Ako nema preostalih ciljnih položaja, vraćamo 0
             return 0
 
-        # Računa Manhattan udaljenost do svakog preostalog ciljnog položaja
-        distances = [abs(position[0] - pos[0]) + abs(position[1] - pos[1])
+        # menheten udaljenost se racuna kao zbir apsolutnih razlika po x i y koordinatama.
+        distances = [abs(position[0] - pos[0]) + abs(position[1] - pos[1]) # |x1-x2|+|y1-y2|
                      for pos in remaining_gold_positions]
 
-        # Vraća minimalnu udaljenost kao heuristiku
+        # vraca minimalnu udaljenost kao heuristiku
         min_distance = min(distances)
 
         return min_distance
 
-    # Rekonstruišemo put od starta do zlatnika
+    # rekonstruišemo put od starta do zlatnika
     def reconstruct_path2(self, came_from, start, end):
         path = []
-        current = end  # Trenutna pozicija je poslednja pozicija
+        current = end  # trenutna pozicija je poslednja pozicija
         while current != start:
-            path.append(list(current))  # Dodajemo trenutnu poziciju u putanju
+            path.append(list(current))  # dodajemo trenutnu poziciju u putanju
             current = came_from[tuple(current)]
         path.append(start)
-        path.reverse()  # Rekonstruisani put je u obrnutom redosledu
+        path.reverse()  # rekonstruisani put je u obrnutom redosledu
         return path
-
+#UKI - grananje i ogranicavanje
 # za svakog sledbenika poslednjeg cvora na uklonjenoj putanji formira se po jedna nova parcijalna putanja
     def uki_search(self, start, matrix_cost, gold_positions):
         paths = []
@@ -267,7 +268,7 @@ class Graph(object):
                 len(x), -x[-1][1] if len(x[-1]) > 1 else 0, x[-1][2] if len(x[-1]) > 2 else 0))
 
         return paths
-
+#MICKO - A* algoritam
     def micko_search(self, start, matrix_cost, gold_positions):
         paths = []  # Inicijalizujemo praznu listu za cuvanje pronadjenih puteva
         # Dodajemo indeks zlatnika u listu zlatnika
